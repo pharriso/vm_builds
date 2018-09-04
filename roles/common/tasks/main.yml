@@ -1,0 +1,22 @@
+---
+
+- name: Set hostname
+  hostname:
+    name: "{{ inventory_hostname }}"
+
+- name: Subscribe to RHN
+  redhat_subscription:
+    state: present
+    username: "{{ rhsm_user }}"
+    password: "{{ rhsm_password }}"
+    pool_ids: "{{ rhsm_pool }}"
+
+- name: Disable all RHSM repositories
+  rhsm_repository:
+    name: '*'
+    state: disabled
+
+- name: Enable rhel-7-server-rpms
+  rhsm_repository:
+    name: rhel-7-server-rpms
+    state: enabled
