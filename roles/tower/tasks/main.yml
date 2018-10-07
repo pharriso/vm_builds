@@ -1,0 +1,65 @@
+---
+
+- name: Enable tower repos 
+  rhsm_repository:
+    name: "{{ item }}"
+    state: enabled
+  with_items:
+    - rhel-7-server-rpms
+    - rhel-7-server-extras-rpms
+  tags: tower
+
+- name: Enable epel
+  yum:
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    state: installed
+  tags: tower
+
+- name: Download tower tar file
+  unarchive:
+    src: https://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-latest.tar.gz
+    dest: /root
+    remote_src: yes 
+  tags: tower
+
+- name: Template out inventory file
+  template:
+    src: inventory.j2
+    dest: /root/ansible-tower-setup-{{ tower_version }}/inventory
+  tags: tower
+
+- name: Run tower installer
+  shell: cd /root/ansible-tower-setup-{{ tower_version }} && ./setup.sh
+  args:
+    creates: /etc/systemd/system/multi-user.target.wants/supervisord.service
+  tags: tower
+
+- name: Install pip
+  yum:
+    name: python2-pip
+    state: present
+  tags: tower
+
+- name: Install tower-cli
+  pip:
+    name: ansible-tower-cli
+    state: present
+  tags: tower
+
+- name: Configure tower-cli
+  template:
+    src: tower_cli.cfg.j2
+    dest: /root/.tower_cli.cfg
+    mode: 0600
+  tags: tower
+
+- name: Copy license file across
+  copy:
+    src: license.txt
+    dest: /root
+  tags: tower
+
+- name: Install license
+  shell: tower-cli setting modify LICENSE @/root/license.txt
+  tags: tower
+  

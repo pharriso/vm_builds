@@ -1,0 +1,9 @@
+---
+- hosts: web:lb
+  connection: local
+  roles:
+    - vm
+
+- hosts: web:lb
+  roles:
+    - common

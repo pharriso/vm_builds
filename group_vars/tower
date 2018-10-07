@@ -1,0 +1,6 @@
+memory: 4
+vcpu: 2
+tower_version: 3.3.0-1
+tower_admin_password: Redhat123
+tower_ssh_password: Redhat123
+

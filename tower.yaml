@@ -1,0 +1,11 @@
+---
+- hosts: tower
+  connection: local
+  roles:
+    - vm
+
+- hosts: tower
+  roles:
+    - common
+    - tower
+#    - tower-insights

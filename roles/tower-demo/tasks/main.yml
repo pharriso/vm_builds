@@ -1,0 +1,17 @@
+---
+
+- name: Create Demo Project
+  shell: tower-cli project create --name Demo --organization Demo --scm-type git --scm-url https://github.com/pharriso/ansible-lb-demo.git --monitor --scm-update-on-launch true --scm-clean true
+  tags: tower-demo
+
+- name: Create loadbalancer Template
+  shell: tower-cli job_template create --name "Demo Deploy loadbalancer" --inventory Demo --job-type run --project Demo --playbook deploy_lb.yaml --credential ssh --use-fact-cache true --ask-limit-on-launch true
+  tags: tower-demo
+
+- name: Create webservers Template
+  shell: tower-cli job_template create --name "Demo Deploy webserver" --inventory Demo --job-type run --project Demo --playbook deploy_web.yaml --credential ssh --use-fact-cache true --ask-limit-on-launch true
+  tags: tower-demo
+
+- name: Create Insights Template
+  shell: tower-cli job_template create --name "Demo install Insights" --inventory Demo --job-type run --project Demo --playbook install_insights.yaml --credential ssh --use-fact-cache true 
+  tags: tower-demo
